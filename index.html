@@ -28,13 +28,13 @@
             transform-origin: top center;
             
             /* هنا السر: العرض لازم يكون أصغر من 100% لأننا كبرناه 1.75 مرة */
-            width: 57.14%; /* حسابياً: 100 تقسيم 1.75 */
+            width: 50.14%; /* حسابياً: 100 تقسيم 1.75 */
             height: calc(100% + 45px);
             border: none;
         }
 
         /* تعديلات خاصة للجوال فقط */
-        @media only screen and (max-width: 600px) {
+        @media only screen and (max-width: 400px) {
             iframe {
                 width: 57.14%; /* لضمان عدم خروج المحتوى عن الشاشة */
                 height: calc(100% + 45px);
