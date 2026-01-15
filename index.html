@@ -49,118 +49,222 @@
 
 
 
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>تسجيل دخول الزوار</title>
-    <style>
-        :root {
-            --bg: #0b0b0b;
-            --accent: #083D53;
-            --text: #ffffff;
-            --muted: rgba(255,255,255,0.6);
-        }
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: system-ui, -apple-system, sans-serif;
-            margin: 0; padding: 20px;
-            display: flex; justify-content: center; align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            width: 100%; max-width: 450px; text-align: center;
-        }
-        .logo { width: 150px; margin-bottom: 30px; }
-        .input-group { margin-bottom: 20px; text-align: right; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 18px; }
-        input, select {
-            width: 100%; padding: 18px; border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: #1a1a1a; color: white; font-size: 18px;
-        }
-        .btn {
-            width: 100%; padding: 20px; border-radius: 12px;
-            border: none; background: var(--accent); color: white;
-            font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 10px;
-        }
-        .status { margin-top: 20px; color: var(--muted); }
-        .hidden { display: none; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Efficiency Center - Visitor Check-in</title>
+  <style>
+    :root{
+      --bg:#0b0b0b; --bg2:#121212; --stroke: rgba(255,255,255,.10);
+      --text:#ffffff; --muted: rgba(255,255,255,.70); --muted2: rgba(255,255,255,.45);
+      --accent:#083D53; --success:#27ae60; --danger:#ff4d4d;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0; padding:0; min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      color: var(--text); background: var(--bg);
+      display: flex; justify-content: center; align-items: center;
+    }
+    .card {
+      width: 100%; max-width: 500px; min-height: 100vh;
+      background: linear-gradient(180deg, var(--bg), var(--bg2));
+      display: flex; flex-direction: column; justify-content: center; position: relative;
+    }
+    .inner{ padding: 30px; width: 100%; }
+    .header{
+      display:flex; flex-direction: column; align-items:center; 
+      gap: 15px; padding-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,.08);
+      margin-bottom: 30px;
+    }
+    .brand img{ width: 180px; height:auto; }
+    .rightTitle{ font-size: 14px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted2); }
+    .sectionTitle{ margin: 0 0 12px 0; font-size: 32px; font-weight: 900; text-align: center; }
+    .sectionText{ margin: 0 0 25px 0; color: var(--muted); font-size: 18px; text-align: center; line-height: 1.5; }
+    .langRow{ display:flex; gap: 15px; margin: 20px 0 25px 0; }
+    .langBtn{ flex:1; border-radius: 15px; padding: 20px; border: 1px solid var(--stroke); background: rgba(0,0,0,.20); color: var(--text); font-weight: 900; font-size: 20px; cursor:pointer; }
+    .langBtn.active{ background: var(--accent); border-color: var(--accent); }
+    .notice{ background: rgba(255,255,255,.06); border: 1px solid var(--stroke); border-radius: 18px; padding: 20px; margin-bottom: 25px; font-size: 16px; line-height: 1.6; text-align: center; }
+    label{ display:block; margin: 20px 0 10px 0; font-size: 18px; font-weight: bold; color: rgba(255,255,255,.9); }
+    input, select, textarea{ 
+      width:100%; padding: 18px; border-radius: 15px; border: 1px solid var(--stroke); 
+      background: rgba(0,0,0,.25); color: #fff; font-size: 18px; outline: none; 
+    }
+    .btnRow{ display:flex; flex-direction: column; gap: 15px; margin-top: 30px; }
+    .btn{ width: 100%; padding: 20px; border-radius: 18px; border: none; cursor:pointer; font-weight: 1000; font-size: 20px; display:flex; align-items:center; justify-content:center; }
+    .btnPrimary{ background: var(--accent); color: white; }
+    .btnSuccess{ background: var(--success); color: white; }
+    .btnGhost{ background: transparent; border: 1px solid var(--stroke); color: var(--text); order: 2; }
+    .hidden{ display:none !important; }
+    #status{ margin-top: 20px; text-align: center; color: var(--muted); font-size: 16px; font-weight: bold; }
+    #step0, #step1, #step2, #stepSuccess { animation: fadeIn 0.4s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
 </head>
 <body>
+  <div class="card">
+    <div class="inner">
+      <div class="header">
+        <div class="brand"><img src="https://www.efficiencys.com.sa/assets/imgs/logos/footerLogo.png" alt="Logo" /></div>
+        <div class="rightTitle" id="topTitle">VISITOR Login</div>
+      </div>
 
-<div class="container">
-    <img src="https://www.efficiencys.com.sa/assets/imgs/logos/footerLogo.png" class="logo">
-    
-    <div id="phoneStep">
-        <h2>أهلاً بك</h2>
-        <p style="color: var(--muted)">أدخل رقم الجوال للمتابعة</p>
-        <div class="input-group">
-            <input type="tel" id="phoneInput" placeholder="05xxxxxxxx" style="text-align: center;">
+      <div id="step0">
+        <h2 class="sectionTitle" id="wTitle">أهلاً بك</h2>
+        <p class="sectionText" id="wText">اختر اللغة للمتابعة.</p>
+        <div class="langRow">
+          <button class="langBtn" id="btnEn" type="button">English</button>
+          <button class="langBtn active" id="btnAr" type="button">العربية</button>
         </div>
-        <button class="btn" onclick="checkUser()">تحقق ومتابعة</button>
+        <div class="notice" id="welcomeNotice">يسعدنا خدمتك. بعد اختيار اللغة، سنطلب رقم الجوال للتحقق.</div>
+        <div class="btnRow"><button class="btn btnPrimary" id="startBtn" type="button">بدء | Start</button></div>
+      </div>
+
+      <div id="step1" class="hidden">
+        <h2 class="sectionTitle" id="phoneTitle">رقم الجوال</h2>
+        <p class="sectionText" id="phoneText">أدخل رقم الجوال للمتابعة.</p>
+        <label id="phoneLabel">رقم الجوال</label>
+        <input type="tel" id="tel" placeholder="05xxxxxxxx" inputmode="tel" />
+        <div class="btnRow">
+          <button class="btn btnPrimary" id="checkBtn">تحقق ومتابعة</button>
+          <button class="btn btnGhost" id="backBtn">رجوع</button>
+        </div>
+      </div>
+
+      <div id="step2" class="hidden">
+        <div class="notice" id="welcomeBox"></div>
+        <label id="nameLabel">الاسم الكامل</label>
+        <input type="text" id="name" placeholder="اسمك الكامل" />
+        <label id="emailLabel">البريد الإلكتروني</label>
+        <input type="email" id="email" placeholder="example@domain.com" />
+        <label id="purposeLabel">سبب الزيارة</label>
+        <select id="purpose">
+          <option value="" disabled selected id="purposePlaceholder">اختر من القائمة</option>
+          <option value="Business Meeting" id="p1">اجتماع عمل</option>
+          <option value="Meeting Room" id="p2">غرفة اجتماعات</option>
+          <option value="Branch Tour" id="p3">جولة في الفرع</option>
+          <option value="Other" id="pOther">أخرى</option>
+        </select>
+        <div id="otherWrap" class="hidden">
+          <label id="otherLabel">اكتب السبب</label>
+          <textarea id="otherReason" placeholder="اكتب السبب هنا..."></textarea>
+        </div>
+        <div class="btnRow">
+          <button class="btn btnSuccess" id="saveBtn">تأكيد تسجيل الدخول</button>
+          <button class="btn btnGhost" id="backToPhoneBtn">رجوع</button>
+        </div>
+      </div>
+
+      <div id="stepSuccess" class="hidden" style="text-align: center; padding: 60px 20px;">
+          <div style="font-size: 80px; color: #27ae60; margin-bottom: 25px;">✓</div>
+          <h2 id="successTitle" style="margin: 0; font-size: 30px;">تمت العملية بنجاح</h2>
+          <p id="successDesc" style="color: var(--muted); margin-top: 15px; font-size: 20px;">شكراً لك، نتمنى لك زيارة سعيدة</p>
+      </div>
+      <div id="status"></div>
     </div>
+  </div>
 
-    <div id="dataStep" class="hidden">
-        <h3 id="welcomeMsg">مرحباً بك</h3>
-        <div class="input-group">
-            <label>الاسم الكامل</label>
-            <input type="text" id="nameInput">
-        </div>
-        <div class="input-group">
-            <label>سبب الزيارة</label>
-            <select id="purposeInput">
-                <option value="اجتماع عمل">اجتماع عمل</option>
-                <option value="جولة">جولة في الفرع</option>
-            </select>
-        </div>
-        <button class="btn" style="background: #27ae60;" onclick="submitData()">تأكيد الدخول</button>
-    </div>
-
-    <div id="status" class="status"></div>
-</div>
-
-<script>
-async function checkUser() {
-    const phone = document.getElementById('phoneInput').value;
+  <script>
+    // ضع رابط الـ Web App الخاص بك هنا بعد إعادة النشر
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz8QSC8GTJuHLDlcsWhs6Ye-yb57_T_D-Js87LcbBaIDN2h5A2qKRPoGmn4hXD8UTHyZA/exec";
-    
-    showStatus("جاري التحقق...");
-    
-    try {
-        // إضافة mode: 'cors' و cache: 'no-cache' لضمان التحديث
-        const response = await fetch(`${SCRIPT_URL}?phone=${phone}`, {
-            method: "GET",
-            mode: "cors", 
-            redirect: "follow" 
-        });
 
-        const data = await response.json();
-        
-        // الانتقال للخطوة التالية إذا نجح الطلب
-        if (data) {
-            document.getElementById('phoneStep').classList.add('hidden');
-            document.getElementById('dataStep').classList.remove('hidden');
-            
-            if(data.found) {
-                document.getElementById('nameInput').value = data.name || "";
-                document.getElementById('nameInput').disabled = true;
-                document.getElementById('welcomeMsg').innerText = "أهلاً بك مجدداً";
-            }
-            showStatus("");
-        }
-    } catch (e) {
-        console.error(e);
-        showStatus("خطأ في جلب البيانات، تأكد من نشر السكريبت كـ Anyone");
+    let currentLang = 'ar';
+    const T = {
+      ar: {
+        topTitle: "تسجيل الزوار", wTitle: "أهلاً بك", wText: "اختر اللغة للمتابعة.",
+        welcomeNotice: "يسعدنا خدمتك. بعد اختيار اللغة، سنطلب رقم الجوال للتحقق.",
+        startBtn: "بدء", phoneTitle: "رقم الجوال", phoneText: "أدخل رقم الجوال للمتابعة.",
+        phoneLabel: "رقم الجوال *", backBtn: "رجوع", checkBtn: "تحقق ومتابعة",
+        foundMsg: "أهلاً بك مجدداً! تم العثور على بياناتك.",
+        newMsg: "مرحباً! هذه أول زيارة لك، فضلاً أدخل بياناتك.",
+        nameLabel: "الاسم الكامل *", namePh: "اسمك الكامل", emailLabel: "البريد الإلكتروني",
+        emailPh: "example@domain.com", purposeLabel: "سبب الزيارة *", purposePh: "اختر من القائمة",
+        p1: "غرفة الإجتماعات", p2: "جولة في الفرع", p3: "إجتماع عمل", pOther: "أخرى",
+        otherLabel: "اكتب السبب *", otherPh: "اكتب سبب الزيارة هنا...",
+        backToPhoneBtn: "رجوع", saveBtn: "تأكيد تسجيل الدخول",
+        successTitle: "تمت العملية بنجاح", successDesc: "شكراً لك، نتمنى لك زيارة سعيدة",
+        verifying: "جاري التحقق...", saving: "جاري الحفظ..."
+      },
+      en: {
+        topTitle: "VISITOR LOGIN", wTitle: "Welcome", wText: "Choose a language.",
+        welcomeNotice: "Glad to have you. We'll need your mobile number to complete the login.",
+        startBtn: "Start", phoneTitle: "Mobile Number", phoneText: "Enter your mobile number.",
+        phoneLabel: "Mobile Number *", backBtn: "Back", checkBtn: "Verify & Continue",
+        foundMsg: "Welcome back! Your details were found.",
+        newMsg: "Welcome! Please provide your details.",
+        nameLabel: "Full Name *", namePh: "Your full name", emailLabel: "Email",
+        emailPh: "example@domain.com", purposeLabel: "Visit Purpose *", purposePh: "Select an option",
+        p1: "Meeting Room", p2: "Branch Tour", p3: "Business Meeting", pOther: "Other",
+        otherLabel: "Specify Purpose *", otherPh: "Type your purpose...",
+        backToPhoneBtn: "Back", saveBtn: "Confirm Login",
+        successTitle: "Success!", successDesc: "Thank you, have a great visit.",
+        verifying: "Verifying...", saving: "Saving..."
+      }
+    };
+
+    function $(id){ return document.getElementById(id); }
+
+    function setLang(lang){
+      currentLang = lang;
+      document.documentElement.dir = (lang === 'ar' ? 'rtl' : 'ltr');
+      $("btnAr").classList.toggle("active", lang === 'ar');
+      $("btnEn").classList.toggle("active", lang === 'en');
+      applyTranslations();
     }
-}
 
-    function showStatus(msg) { document.getElementById('status').innerText = msg; }
-</script>
+    function applyTranslations(){
+      const t = T[currentLang];
+      $("topTitle").innerText = t.topTitle;
+      $("wTitle").innerText = t.wTitle;
+      $("wText").innerText = t.wText;
+      $("welcomeNotice").innerText = t.welcomeNotice;
+      $("startBtn").innerText = currentLang === 'ar' ? "بدء" : "Start";
+      $("phoneTitle").innerText = t.phoneTitle;
+      $("phoneText").innerText = t.phoneText;
+      $("phoneLabel").innerText = t.phoneLabel;
+      $("backBtn").innerText = t.backBtn;
+      $("checkBtn").innerText = t.checkBtn;
+      $("nameLabel").innerText = t.nameLabel;
+      $("name").placeholder = t.namePh;
+      $("emailLabel").innerText = t.emailLabel;
+      $("email").placeholder = t.emailPh;
+      $("purposeLabel").innerText = t.purposeLabel;
+      $("purposePlaceholder").innerText = t.purposePh;
+      $("p1").innerText = t.p1; $("p2").innerText = t.p2; $("p3").innerText = t.p3; $("pOther").innerText = t.pOther;
+      $("otherLabel").innerText = t.otherLabel;
+      $("otherReason").placeholder = t.otherPh;
+      $("backToPhoneBtn").innerText = t.backToPhoneBtn;
+      $("saveBtn").innerText = t.saveBtn;
+      $("successTitle").innerText = t.successTitle;
+      $("successDesc").innerText = t.successDesc;
+    }
 
-</body>
-</html>
+    async function verify() {
+      const phone = $("tel").value.trim();
+      if(!phone) return alert(T[currentLang].phoneLabel);
+      $("status").innerText = T[currentLang].verifying;
+
+      try {
+        const response = await fetch(`${SCRIPT_URL}?action=checkUser&phone=${phone}`, { redirect: 'follow' });
+        const res = await response.json();
+        
+        $("status").innerText = "";
+        $("step1").classList.add("hidden");
+        $("step2").classList.remove("hidden");
+        
+        if(res && res.found){
+          $("welcomeBox").innerText = T[currentLang].foundMsg;
+          $("name").value = res.name || "";
+          $("email").value = res.email || "";
+          $("name").disabled = true; $("email").disabled = true;
+          $("name").style.background = "rgba(255,255,255,0.05)";
+        } else {
+          $("welcomeBox").innerText = T[currentLang].newMsg;
+          $("name").value = ""; $("email").value = "";
+          $("name").disabled = false; $("email").disabled = false;
+          $("name").style.background = "rgba(0,0,0,0.25)";
+        }
+      } catch (err) {
+        $("status
