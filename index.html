@@ -125,29 +125,39 @@
 </div>
 
 <script>
+async function checkUser() {
+    const phone = document.getElementById('phoneInput').value;
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz8QSC8GTJuHLDlcsWhs6Ye-yb57_T_D-Js87LcbBaIDN2h5A2qKRPoGmn4hXD8UTHyZA/exec";
+    
+    showStatus("جاري التحقق...");
+    
+    try {
+        // إضافة mode: 'cors' و cache: 'no-cache' لضمان التحديث
+        const response = await fetch(`${SCRIPT_URL}?phone=${phone}`, {
+            method: "GET",
+            mode: "cors", 
+            redirect: "follow" 
+        });
 
-    async function checkUser() {
-        const phone = document.getElementById('phoneInput').value;
-        showStatus("جاري التحقق...");
+        const data = await response.json();
         
-        try {
-            const response = await fetch(`${SCRIPT_URL}?phone=${phone}`);
-            const data = await response.json();
-            
+        // الانتقال للخطوة التالية إذا نجح الطلب
+        if (data) {
             document.getElementById('phoneStep').classList.add('hidden');
             document.getElementById('dataStep').classList.remove('hidden');
             
             if(data.found) {
-                document.getElementById('nameInput').value = data.name;
+                document.getElementById('nameInput').value = data.name || "";
                 document.getElementById('nameInput').disabled = true;
                 document.getElementById('welcomeMsg').innerText = "أهلاً بك مجدداً";
             }
             showStatus("");
-        } catch (e) {
-            showStatus("خطأ في الاتصال");
         }
+    } catch (e) {
+        console.error(e);
+        showStatus("خطأ في جلب البيانات، تأكد من نشر السكريبت كـ Anyone");
     }
+}
 
     function showStatus(msg) { document.getElementById('status').innerText = msg; }
 </script>
