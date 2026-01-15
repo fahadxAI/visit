@@ -19,7 +19,7 @@
     ">
   </iframe>
 </div> -->
-
+<!-- 
 
 <div style="width: 100%; height: 100vh; overflow: hidden; position: relative; background-color: #0b0b0b;">
   <iframe 
@@ -43,4 +43,114 @@
       scrollbar-width: none; 
     ">
   </iframe>
+</div> -->
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>تسجيل دخول الزوار</title>
+    <style>
+        :root {
+            --bg: #0b0b0b;
+            --accent: #083D53;
+            --text: #ffffff;
+            --muted: rgba(255,255,255,0.6);
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            width: 100%; max-width: 450px; text-align: center;
+        }
+        .logo { width: 150px; margin-bottom: 30px; }
+        .input-group { margin-bottom: 20px; text-align: right; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 18px; }
+        input, select {
+            width: 100%; padding: 18px; border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: #1a1a1a; color: white; font-size: 18px;
+        }
+        .btn {
+            width: 100%; padding: 20px; border-radius: 12px;
+            border: none; background: var(--accent); color: white;
+            font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 10px;
+        }
+        .status { margin-top: 20px; color: var(--muted); }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <img src="https://www.efficiencys.com.sa/assets/imgs/logos/footerLogo.png" class="logo">
+    
+    <div id="phoneStep">
+        <h2>أهلاً بك</h2>
+        <p style="color: var(--muted)">أدخل رقم الجوال للمتابعة</p>
+        <div class="input-group">
+            <input type="tel" id="phoneInput" placeholder="05xxxxxxxx" style="text-align: center;">
+        </div>
+        <button class="btn" onclick="checkUser()">تحقق ومتابعة</button>
+    </div>
+
+    <div id="dataStep" class="hidden">
+        <h3 id="welcomeMsg">مرحباً بك</h3>
+        <div class="input-group">
+            <label>الاسم الكامل</label>
+            <input type="text" id="nameInput">
+        </div>
+        <div class="input-group">
+            <label>سبب الزيارة</label>
+            <select id="purposeInput">
+                <option value="اجتماع عمل">اجتماع عمل</option>
+                <option value="جولة">جولة في الفرع</option>
+            </select>
+        </div>
+        <button class="btn" style="background: #27ae60;" onclick="submitData()">تأكيد الدخول</button>
+    </div>
+
+    <div id="status" class="status"></div>
 </div>
+
+<script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz8QSC8GTJuHLDlcsWhs6Ye-yb57_T_D-Js87LcbBaIDN2h5A2qKRPoGmn4hXD8UTHyZA/exec";
+
+    async function checkUser() {
+        const phone = document.getElementById('phoneInput').value;
+        showStatus("جاري التحقق...");
+        
+        try {
+            const response = await fetch(`${SCRIPT_URL}?phone=${phone}`);
+            const data = await response.json();
+            
+            document.getElementById('phoneStep').classList.add('hidden');
+            document.getElementById('dataStep').classList.remove('hidden');
+            
+            if(data.found) {
+                document.getElementById('nameInput').value = data.name;
+                document.getElementById('nameInput').disabled = true;
+                document.getElementById('welcomeMsg').innerText = "أهلاً بك مجدداً";
+            }
+            showStatus("");
+        } catch (e) {
+            showStatus("خطأ في الاتصال");
+        }
+    }
+
+    function showStatus(msg) { document.getElementById('status').innerText = msg; }
+</script>
+
+</body>
+</html>
