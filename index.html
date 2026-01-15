@@ -1,54 +1,3 @@
-<!-- <div style="width: 100%; height: 100vh; overflow: hidden; position: relative; background-color: #0b0b0b;">
-  <iframe 
-    src="https://script.google.com/macros/s/AKfycbz8QSC8GTJuHLDlcsWhs6Ye-yb57_T_D-Js87LcbBaIDN2h5A2qKRPoGmn4hXD8UTHyZA/exec" 
-    scrolling="no" 
-    allowtransparency="true"
-    style="
-      position: absolute; 
-      top: -45px; 
-      left: 50%;
-      width: 58%; 
-      height: calc(100% + 45px);
-      border: none;
-      outline: none; 
-      transform: translateX(-50%) scale(1.75);
-      transform-origin: top center;
-      background-color: #0b0b0b;
-      -ms-overflow-style: none; 
-      scrollbar-width: none; 
-    ">
-  </iframe>
-</div> -->
-<!-- 
-
-<div style="width: 100%; height: 100vh; overflow: hidden; position: relative; background-color: #0b0b0b;">
-  <iframe 
-    src="https://script.google.com/macros/s/AKfycbz8QSC8GTJuHLDlcsWhs6Ye-yb57_T_D-Js87LcbBaIDN2h5A2qKRPoGmn4hXD8UTHyZA/exec" 
-    scrolling="no" 
-    allowtransparency="true"
-    frameborder="0" 
-    style="
-      position: absolute; 
-      top: -45px; 
-      left: 50%;
-      width: 58%; 
-      height: calc(100% + 45px);
-      border: 0; /* إلغاء البرواز تماماً */
-      outline: none; 
-      transform: translateX(-50%) scale(1.76); /*السكل*/
-      transform-origin: top center;
-      background-color: #0b0b0b; /*عشان نلون الحواف  */
-      box-shadow: 0 0 10px 5px #0b0b0b; /* مع الحواف هنا بنزود ظل عشان نخفيه اكثر تبع الفريم */
-      -ms-overflow-style: none; 
-      scrollbar-width: none; 
-    ">
-  </iframe>
-</div> -->
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -267,4 +216,50 @@
           $("name").style.background = "rgba(0,0,0,0.25)";
         }
       } catch (err) {
-        $("status
+        $("status").innerText = "خطأ في الاتصال | Connection Error";
+      }
+    }
+
+    async function save() {
+      const purposeSelect = $("purpose");
+      let finalPurpose = (purposeSelect.value === "Other") ? $("otherReason").value.trim() : purposeSelect.options[purposeSelect.selectedIndex].text;
+
+      const d = {
+        action: "saveData",
+        phone: $("tel").value.trim(),
+        name: $("name").value.trim(),
+        email: $("email").value.trim(),
+        purpose: finalPurpose
+      };
+
+      if(!d.name || !d.purpose || d.purpose === $("purposePlaceholder").innerText) {
+        return alert("الرجاء إكمال البيانات | Please complete all fields");
+      }
+
+      $("status").innerText = T[currentLang].saving;
+
+      try {
+        const params = new URLSearchParams(d).toString();
+        await fetch(`${SCRIPT_URL}?${params}`, { redirect: 'follow' });
+        
+        $("status").innerText = "";
+        $("step2").classList.add("hidden");
+        $("stepSuccess").classList.remove("hidden");
+      } catch (err) {
+        $("status").innerText = "خطأ في الحفظ | Save Error";
+      }
+    }
+
+    $("btnEn").onclick = () => setLang("en");
+    $("btnAr").onclick = () => setLang("ar");
+    $("startBtn").onclick = () => { $("step0").classList.add("hidden"); $("step1").classList.remove("hidden"); };
+    $("backBtn").onclick = () => { $("step1").classList.add("hidden"); $("step0").classList.remove("hidden"); };
+    $("checkBtn").onclick = verify;
+    $("backToPhoneBtn").onclick = () => { $("step2").classList.add("hidden"); $("step1").classList.remove("hidden"); };
+    $("saveBtn").onclick = save;
+    $("purpose").onchange = () => $("otherWrap").classList.toggle("hidden", $("purpose").value !== "Other");
+    
+    setLang("ar");
+  </script>
+</body>
+</html>
